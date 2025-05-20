@@ -12,4 +12,3 @@ services:
     buildCommand: npm install
     startCommand: node server.js
     rootDir: server
-
