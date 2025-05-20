@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: fitness-backend
+    env: node
+    buildCommand: cd server && npm install
+    startCommand: cd server && node index.js
+    rootDir: server
+
+  - type: web
+    name: fitness-frontend
+    env: static
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: client/build
+    rootDir: client
