@@ -4,6 +4,30 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Home.css";
 
+// Reusable Workout Card Component
+function WorkoutCard({ plan, onStart }) {
+  return (
+    <div className="workout-card" tabIndex={0} role="button" onClick={() => onStart(plan.id)} onKeyDown={e => { if (e.key === 'Enter') onStart(plan.id) }}>
+      <img
+        src={plan.imageUrl}
+        alt={plan.name}
+        className="workout-image"
+        loading="lazy"
+      />
+      <div className="card-content">
+        <h3 className="plan-name">{plan.name}</h3>
+        <p className="plan-description">{plan.description}</p>
+        <button
+          className="start-button"
+          onClick={e => { e.stopPropagation(); onStart(plan.id); }}
+        >
+          Start Workout
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function Home() {
   const [workoutPlans, setWorkoutPlans] = useState([]);
   const navigate = useNavigate();
@@ -11,12 +35,8 @@ function Home() {
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/workout-plans")
-      .then((response) => {
-        setWorkoutPlans(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching workout plans:", error);
-      });
+      .then((response) => setWorkoutPlans(response.data))
+      .catch((error) => console.error("Error fetching workout plans:", error));
   }, []);
 
   const handleStartWorkout = (workoutId) => {
@@ -34,7 +54,10 @@ function Home() {
             Choose a plan and start transforming your body today.
           </p>
           <div className="hero-buttons">
-            <button className="cta-button" onClick={() => navigate("/plans")}>
+            <button
+              className="cta-button"
+              onClick={() => navigate("/plans")}
+            >
               Explore Plans
             </button>
             <button
@@ -54,24 +77,7 @@ function Home() {
             <p className="loading-text">Loading plans...</p>
           ) : (
             workoutPlans.map((plan) => (
-              <div key={plan.id} className="workout-card">
-                <img
-                  src={plan.imageUrl}
-                  alt={plan.name}
-                  className="workout-image"
-                  loading="lazy"
-                />
-                <div className="card-content">
-                  <h3 className="plan-name">{plan.name}</h3>
-                  <p className="plan-description">{plan.description}</p>
-                  <button
-                    className="start-button"
-                    onClick={() => handleStartWorkout(plan.id)}
-                  >
-                    Start Workout
-                  </button>
-                </div>
-              </div>
+              <WorkoutCard key={plan.id} plan={plan} onStart={handleStartWorkout} />
             ))
           )}
         </div>
@@ -81,4 +87,3 @@ function Home() {
 }
 
 export default Home;
-
