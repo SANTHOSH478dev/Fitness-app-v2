@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./WorkoutList.css";
 
 function WorkoutList() {
   const [exercises, setExercises] = useState([]);
