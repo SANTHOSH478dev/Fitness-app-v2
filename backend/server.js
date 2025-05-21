@@ -131,7 +131,7 @@ app.get("/api/workout-plans", async (req, res) => {
 
 // Root route
 app.get("/", (req, res) => {
-  res.send("💪 Welcome to the Social Fitness App API!");
+  res.send("💪 Welcome to the  Fitness App API!");
 });
 
 // Serve React frontend
