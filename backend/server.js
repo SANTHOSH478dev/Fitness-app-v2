@@ -11,14 +11,13 @@ app.use(cors());
 
 // MongoDB connection
 mongoose
-  .connect(process.env.MONGODB_URI || "mongodb+srv://<username>:<password>@cluster.mongodb.net/myDB?retryWrites=true&w=majority", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log("MongoDB connection error:", err));
+  .connect(
+    process.env.MONGODB_URI || "mongodb+srv://<username>:<password>@cluster.mongodb.net/myDB?retryWrites=true&w=majority"
+  )
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Schema
+// Mongoose Schemas
 const workoutSchema = new mongoose.Schema({
   name: String,
   description: String,
@@ -34,7 +33,7 @@ const workoutPlanSchema = new mongoose.Schema({
 
 const WorkoutPlan = mongoose.model("WorkoutPlan", workoutPlanSchema);
 
-// Dummy data (fallback if DB is not used)
+// Dummy fallback data
 const workoutPlans = [
   {
     name: "Beginner Full Body",
@@ -56,25 +55,27 @@ const workoutPlans = [
   },
 ];
 
-// API
+// API route
 app.get("/api/workout-plans", async (req, res) => {
   try {
     const plans = await WorkoutPlan.find();
     if (plans.length === 0) return res.json(workoutPlans); // fallback
     res.json(plans);
   } catch (err) {
+    console.error("❌ API error:", err);
     res.status(500).json({ error: "Failed to fetch workout plans" });
   }
 });
 
-// Serve frontend
-app.use(express.static(path.join(__dirname, "client/build")));
+// Serve React frontend
+const __dirnameClean = path.resolve();
+app.use(express.static(path.join(__dirnameClean, "client/build")));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client/build/index.html"));
+  res.sendFile(path.join(__dirnameClean, "client/build", "index.html"));
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
