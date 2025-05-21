@@ -11,15 +11,18 @@ function estimateCalories(workoutName) {
   return 100;
 }
 
-function TrackProgress({ workouts = [], selectedWorkouts = {} }) {
+function TrackProgress({ workouts = [], selectedWorkouts = {}, counts = {} }) {
   const totalWorkouts = workouts.length;
   const completedWorkouts = workouts.filter(
     (w) => selectedWorkouts[w.name]
   ).length;
 
+  // Calculate calories based on reps count if counts prop is provided
   const caloriesBurned = workouts.reduce((sum, workout) => {
     if (selectedWorkouts[workout.name]) {
-      return sum + (workout.calories || estimateCalories(workout.name));
+      const baseCalories = workout.calories || estimateCalories(workout.name);
+      const reps = counts[workout.name] || 1;
+      return sum + baseCalories * reps * 0.1; // 0.1 as calorie per rep factor, adjust as needed
     }
     return sum;
   }, 0);
@@ -97,7 +100,9 @@ function TrackProgress({ workouts = [], selectedWorkouts = {} }) {
         </span>
         <span>
           Calories Burned:{" "}
-          <span style={{ color: "#dff9fb" }}>{caloriesBurned} kcal</span>
+          <span style={{ color: "#dff9fb" }}>
+            {caloriesBurned.toFixed(1)} kcal
+          </span>
         </span>
       </div>
 
@@ -125,3 +130,4 @@ function TrackProgress({ workouts = [], selectedWorkouts = {} }) {
 }
 
 export default TrackProgress;
+
