@@ -21,7 +21,7 @@ function WorkoutPage() {
     }
 
     axios
-      .get(`http://localhost:5000/api/workout-plans`)
+      .get(`http://localhost:5001/api/workout-plans`)
       .then((response) => {
         const plan = response.data.find((plan) => plan.id === parseInt(id));
         if (plan) {
