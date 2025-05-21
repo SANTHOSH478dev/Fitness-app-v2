@@ -11,6 +11,7 @@ import Profile from "./components/Profile";
 import WorkoutPage from "./components/WorkoutPage";
 import CreateAccount from "./components/CreateAccount";
 import Login from "./components/Login";
+import WorkoutList from "./components/WorkoutList"; // ✅ Import WorkoutList
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/create-account" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />
         <Route path="/workout/:id" element={<WorkoutPage />} />
+        <Route path="/workout-list" element={<WorkoutList />} /> {/* ✅ Added Route */}
       </Routes>
     </Router>
   );
