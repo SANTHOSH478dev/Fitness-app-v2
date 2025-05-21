@@ -13,7 +13,8 @@ import WorkoutPage from "./components/WorkoutPage";
 import CreateAccount from "./components/CreateAccount";
 import Login from "./components/Login";
 import WorkoutList from "./components/WorkoutList";
-import workoutPlans from "./workoutPlans";
+import workoutPlans from "./components/workoutPlans";
+
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/workout/:id" element={<WorkoutPage />} />
         <Route path="/workout-list" element={<WorkoutList />} />
+        <Route path="/workoutPlans" element={<workoutPlans />} />
       </Routes>
     </Router>
   );
