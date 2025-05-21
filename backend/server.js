@@ -14,7 +14,7 @@ app.use(cors());
 // MongoDB connection
 mongoose
   .connect(
-    process.env.MONGODB_URI || "mongodb+srv://SAN:FITNESS@cluster0.2e51bck.mongodb.net/",
+    process.env.MONGODB_URI ||"mongodb+srv://SAN:FITNESS@cluster0.2e51bck.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("✅ MongoDB connected"))
