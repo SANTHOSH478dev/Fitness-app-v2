@@ -34,7 +34,7 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/workout-plans")
+      .get("http://localhost:5001/api/workout-plans")
       .then((response) => setWorkoutPlans(response.data))
       .catch((error) => console.error("Error fetching workout plans:", error));
   }, []);
