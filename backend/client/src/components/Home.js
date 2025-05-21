@@ -1,32 +1,20 @@
 // ./components/Home.js
-import React, {
-  useState,
-  useEffect
-} from 'react';
-import {
-  useNavigate
-} from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Navbar from './Navbar';
+import workoutPlans from '../workoutPlans'; // Import local data
 import '../index.css';
-import Navbar from './Navbar.js';
-
 
 function Home() {
-  const [workoutPlans, setWorkoutPlans] = useState([]);
+  const [plans, setPlans] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:5001/api/workout-plans')
-      .then(response => {
-        setWorkoutPlans(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching workout plans:', error);
-      });
+    // Directly load workoutPlans from local file
+    setPlans(workoutPlans);
   }, []);
 
   const handleStartWorkout = (workoutId) => {
-    // Navigate to the workout page with the workout plan ID
     navigate(`/workout/${workoutId}`);
   };
 
@@ -35,20 +23,31 @@ function Home() {
       <Navbar />
       <h1>Workout Plans</h1>
       <div className="workout-plans-container">
-        {workoutPlans.map(workoutPlan => (
-          <div key={workoutPlan.id}
-            className="workout-plan-card">
-            <h2>{workoutPlan.name}</h2>
-            <p>{workoutPlan.description}</p>
-            <img src={workoutPlan.imageUrl}
-              alt={workoutPlan.name}
-              className="workout-image" /><br />
-            <button className="start-button"
-              onClick={() => handleStartWorkout(workoutPlan.id)}>
-              Start Workout
-            </button>
-          </div>
-        ))}
+        {plans.length === 0 ? (
+          <p>Loading workout plans...</p>
+        ) : (
+          plans.map(plan => (
+            <div key={plan.id} className="workout-plan-card">
+              <h2>{plan.name}</h2>
+              <p>{plan.description}</p>
+              {plan.imageUrl && (
+                <img
+                  src={plan.imageUrl}
+                  alt={plan.name}
+                  className="workout-image"
+                  loading="lazy"
+                />
+              )}
+              <br />
+              <button
+                className="start-button"
+                onClick={() => handleStartWorkout(plan.id)}
+              >
+                Start Workout
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
