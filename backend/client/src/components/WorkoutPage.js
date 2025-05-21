@@ -4,7 +4,8 @@ import '../index.css';
 import Nav from './Navbar';
 
 // Local workout plan data (instead of API or MongoDB)
-import { workoutPlans } from './workoutPlans';
+import workoutPlans from "./components/workoutPlans";
+
 
 const WorkoutPage = () => {
   const { id } = useParams();
