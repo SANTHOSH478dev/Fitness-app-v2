@@ -25,47 +25,60 @@ function Home() {
 
   return (
     <div className="home-page">
-      <div className="hero-section">
-        <h1 className="main-title">Your Fitness Journey Starts Here</h1>
-        <p className="sub-title">
-          Choose a plan and start transforming your body today
-        </p>
-        <div className="hero-buttons">
-          <button className="cta-button" onClick={() => navigate("/plans")}>
-            Explore Plans
-          </button>
-          <button
-            className="cta-button secondary"
-            onClick={() => navigate("/progress")}
-          >
-            Track Progress
-          </button>
-        </div>
-      </div>
-
-      <div className="workout-plans-container">
-        {workoutPlans.map((plan) => (
-          <div key={plan.id} className="workout-card">
-            <img
-              src={plan.imageUrl}
-              alt={plan.name}
-              className="workout-image"
-            />
-            <div className="card-content">
-              <h2>{plan.name}</h2>
-              <p>{plan.description}</p>
-              <button
-                className="start-button"
-                onClick={() => handleStartWorkout(plan.id)}
-              >
-                Start Workout
-              </button>
-            </div>
+      <section className="hero-section">
+        <div className="hero-content">
+          <h1 className="main-title">
+            Your Fitness Journey <br /> Starts Here
+          </h1>
+          <p className="sub-title">
+            Choose a plan and start transforming your body today.
+          </p>
+          <div className="hero-buttons">
+            <button className="cta-button" onClick={() => navigate("/plans")}>
+              Explore Plans
+            </button>
+            <button
+              className="cta-button secondary"
+              onClick={() => navigate("/progress")}
+            >
+              Track Progress
+            </button>
           </div>
-        ))}
-      </div>
+        </div>
+      </section>
+
+      <section className="workout-plans-section">
+        <h2 className="section-title">Featured Workout Plans</h2>
+        <div className="workout-plans-container">
+          {workoutPlans.length === 0 ? (
+            <p className="loading-text">Loading plans...</p>
+          ) : (
+            workoutPlans.map((plan) => (
+              <div key={plan.id} className="workout-card">
+                <img
+                  src={plan.imageUrl}
+                  alt={plan.name}
+                  className="workout-image"
+                  loading="lazy"
+                />
+                <div className="card-content">
+                  <h3 className="plan-name">{plan.name}</h3>
+                  <p className="plan-description">{plan.description}</p>
+                  <button
+                    className="start-button"
+                    onClick={() => handleStartWorkout(plan.id)}
+                  >
+                    Start Workout
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
     </div>
   );
 }
 
 export default Home;
+
