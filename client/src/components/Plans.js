@@ -32,7 +32,14 @@ const Plans = () => {
         ) : (
           plans.map((plan) => (
             <div key={plan.id} className="plan-card">
-              <img src={plan.imageUrl} alt={plan.name} className="plan-image" />
+              {plan.imageUrl && (
+                <img
+                  src={plan.imageUrl}
+                  alt={plan.name}
+                  className="plan-image"
+                  loading="lazy"
+                />
+              )}
               <h2>{plan.name}</h2>
               <p>{plan.description}</p>
               <button onClick={() => handleSelectPlan(plan.id)}>
@@ -47,3 +54,4 @@ const Plans = () => {
 };
 
 export default Plans;
+
