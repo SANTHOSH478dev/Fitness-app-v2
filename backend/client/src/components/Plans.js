@@ -1,7 +1,7 @@
 // ./components/Plans.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import workoutPlans from "../workoutPlans"; // Import local data file
 import "./Plans.css";
 
 const Plans = () => {
@@ -9,14 +9,8 @@ const Plans = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5001/api/workout-plans")
-      .then((res) => {
-        setPlans(res.data);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch plans:", err);
-      });
+    // Directly set plans from the imported local data
+    setPlans(workoutPlans);
   }, []);
 
   const handleSelectPlan = (id) => {
@@ -54,4 +48,3 @@ const Plans = () => {
 };
 
 export default Plans;
-
