@@ -1,88 +1,78 @@
-import React, {
-  useState,
-  useEffect
-} from 'react';
-import {
-  useParams
-} from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import '../index.css';
 import Nav from './Navbar';
 
-function WorkoutPage() {
+// Local workout plan data (instead of API or MongoDB)
+import { workoutPlans } from './workoutPlans';
+
+const WorkoutPage = () => {
   const { id } = useParams();
   const [workoutPlan, setWorkoutPlan] = useState(null);
   const [selectedWorkouts, setSelectedWorkouts] = useState({});
 
   useEffect(() => {
-    if (!id) {
-      console.error('Invalid workout plan ID:', id);
-      return;
-    }
-
-    axios.get(`http://localhost:5001/api/workout-plans`)
-      .then(response => {
-        const plan = response.data.find(plan => plan.id === parseInt(id));
-
-        if (plan) {
-          setWorkoutPlan(plan);
-          // Initialize selected workouts state
-          const initialSelectedWorkouts = {};
-          plan.workouts.forEach(workout => {
-            initialSelectedWorkouts[workout.name] = false;
-          });
-          setSelectedWorkouts(initialSelectedWorkouts);
-        } else {
-          console.error('Workout plan not found:', id);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching workout plans:', error);
+    const plan = workoutPlans.find(plan => plan.id === parseInt(id));
+    if (plan) {
+      setWorkoutPlan(plan);
+      const initialSelections = {};
+      plan.workouts.forEach(w => {
+        initialSelections[w.name] = false;
       });
+      setSelectedWorkouts(initialSelections);
+    } else {
+      console.error("Workout plan not found for ID:", id);
+    }
   }, [id]);
 
   const handleCheckboxChange = (workoutName) => {
-    setSelectedWorkouts({
-      ...selectedWorkouts,
-      [workoutName]: !selectedWorkouts[workoutName]
-    });
+    setSelectedWorkouts(prev => ({
+      ...prev,
+      [workoutName]: !prev[workoutName]
+    }));
   };
 
-  if (workoutPlan === null) {
-    return <div>Loading...</div>;
-  }
+  const isAllCompleted = Object.values(selectedWorkouts).every(Boolean);
+
+  if (!workoutPlan) return <div>Loading workout plan...</div>;
 
   return (
-    <div className="workout-plan">
+    <div className="workout-page-container">
       <Nav />
-      <h1 className="workout-plan-title">
-        {workoutPlan.name}
-      </h1>
-      <img src={workoutPlan.imageUrl}
-        alt={workoutPlan.name}
-        className="workout-image" />
-      <p>{workoutPlan.description}</p>
-      <div className="workout-list">
-        {workoutPlan.workouts &&
-          workoutPlan.workouts.map(workout => (
-            <div key={workout.name}
-              className={`workout-item ${selectedWorkouts[workout.name] ?
-                  'selected' : ''}`}>
+      <div className="workout-header">
+        <h1>{workoutPlan.name}</h1>
+        <p>{workoutPlan.description}</p>
+      </div>
+      <div className="workout-image-container">
+        <img src={workoutPlan.imageUrl} alt={workoutPlan.name} className="plan-image-large" />
+      </div>
+
+      <div className="workouts-section">
+        <h2>Workouts</h2>
+        <ul className="workout-list">
+          {workoutPlan.workouts.map(workout => (
+            <li key={workout.name} className={`workout-card ${selectedWorkouts[workout.name] ? 'completed' : ''}`}>
+              <div className="workout-info">
+                <h3>{workout.name}</h3>
+                <p>{workout.description}</p>
+                <span>🕒 {workout.duration} min</span>
+              </div>
               <input
                 type="checkbox"
                 checked={selectedWorkouts[workout.name]}
                 onChange={() => handleCheckboxChange(workout.name)}
               />
-              <label>{workout.name}</label>
-            </div>
+            </li>
           ))}
+        </ul>
+        {isAllCompleted && (
+          <div className="completion-banner">
+            🎉 You’ve completed the full workout plan!
+          </div>
+        )}
       </div>
-      {Object.values(selectedWorkouts).every(value => value)
-        && <div className="workout-completed">
-          Workout Completed!
-        </div>}
     </div>
   );
-}
+};
 
 export default WorkoutPage;
