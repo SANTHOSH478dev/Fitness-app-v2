@@ -12,7 +12,7 @@ app.use(cors());
 // MongoDB connection
 mongoose
   .connect(
-    process.env.MONGODB_URI || "mongodb+srv://<username>:<password>@cluster.mongodb.net/myDB?retryWrites=true&w=majority"
+    process.env.MONGODB_URI || "mongodb+srv://SAN:FITNESS@cluster0.2e51bck.mongodb.net/"
   )
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
