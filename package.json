@@ -11,7 +11,12 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.1",
     "react-scripts": "5.0.1",
+<<<<<<< HEAD
     "web-vitals": "^2.1.4"
+=======
+    "web-vitals": "^2.1.4",
+    "recharts": "^2.15.3"
+>>>>>>> 7acfccf45a42ead6ba242877ef8937ce5bc4d709
   },
   "scripts": {
     "start": "react-scripts start",
