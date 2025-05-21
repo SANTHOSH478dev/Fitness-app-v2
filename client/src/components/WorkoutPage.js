@@ -1,50 +1,44 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
 import axios from "axios";
-import TrackProgress from "./TrackProgress"; // import TrackProgress component
+import TrackProgress from "./TrackProgress";
 import "../index.css";
 
 function WorkoutPage() {
-  const { id } = useParams();
-  const [workoutPlan, setWorkoutPlan] = useState(null);
+  const [exercises, setExercises] = useState([]);
   const [selectedWorkouts, setSelectedWorkouts] = useState({});
-  const [counts, setCounts] = useState({}); // New state for reps count
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes in seconds
+  const [counts, setCounts] = useState({});
+  const [timeLeft, setTimeLeft] = useState(25 * 60);
 
-  // Timer ref to clear interval on unmount
   const timerRef = useRef(null);
 
   useEffect(() => {
-    if (!id) {
-      console.error("Invalid workout plan ID:", id);
-      return;
-    }
-
     axios
-      .get(`http://localhost:5001/api/workout-plans`)
+      .get("https://gym-fit.p.rapidapi.com/v1/exercises", {
+        headers: {
+          "x-rapidapi-host": "gym-fit.p.rapidapi.com",
+          "x-rapidapi-key": "92e2e9d5b8msh3f48e98d42649d3p18bc93jsnf8c45f20029e",
+        },
+      })
       .then((response) => {
-        const plan = response.data.find((plan) => plan.id === parseInt(id));
-        if (plan) {
-          setWorkoutPlan(plan);
+        const fetchedExercises = response.data;
 
-          const initialSelectedWorkouts = {};
-          const initialCounts = {};
-          plan.workouts.forEach((workout) => {
-            initialSelectedWorkouts[workout.name] = false;
-            initialCounts[workout.name] = 10; // default 10 reps each
-          });
-          setSelectedWorkouts(initialSelectedWorkouts);
-          setCounts(initialCounts);
-        } else {
-          console.error("Workout plan not found:", id);
-        }
+        setExercises(fetchedExercises);
+
+        // Initialize selectedWorkouts and counts for all exercises
+        const initialSelected = {};
+        const initialCounts = {};
+        fetchedExercises.forEach((ex) => {
+          initialSelected[ex.name] = false;
+          initialCounts[ex.name] = 10; // default reps
+        });
+        setSelectedWorkouts(initialSelected);
+        setCounts(initialCounts);
       })
       .catch((error) => {
-        console.error("Error fetching workout plans:", error);
+        console.error("Error fetching exercises:", error);
       });
-  }, [id]);
+  }, []);
 
-  // Timer countdown effect
   useEffect(() => {
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
@@ -59,84 +53,69 @@ function WorkoutPage() {
     return () => clearInterval(timerRef.current);
   }, []);
 
-  const handleCheckboxChange = (workoutName) => {
-    setSelectedWorkouts({
-      ...selectedWorkouts,
-      [workoutName]: !selectedWorkouts[workoutName],
-    });
-  };
-
-  const incrementCount = (workoutName) => {
-    setCounts((prev) => ({
+  const handleCheckboxChange = (name) => {
+    setSelectedWorkouts((prev) => ({
       ...prev,
-      [workoutName]: prev[workoutName] + 1,
+      [name]: !prev[name],
     }));
   };
 
-  const decrementCount = (workoutName) => {
+  const incrementCount = (name) => {
     setCounts((prev) => ({
       ...prev,
-      [workoutName]: prev[workoutName] > 1 ? prev[workoutName] - 1 : 1,
+      [name]: prev[name] + 1,
     }));
   };
 
-  // Format time mm:ss
+  const decrementCount = (name) => {
+    setCounts((prev) => ({
+      ...prev,
+      [name]: prev[name] > 1 ? prev[name] - 1 : 1,
+    }));
+  };
+
   const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, "0");
+    const m = Math.floor(seconds / 60).toString().padStart(2, "0");
     const s = (seconds % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
   };
 
-  if (workoutPlan === null) {
-    return <div>Loading...</div>;
-  }
+  if (exercises.length === 0) return <div>Loading...</div>;
 
   return (
     <div className="workout-plan">
-      {/* Timer at top-right */}
       <div className="timer-container">Timer: {formatTime(timeLeft)}</div>
 
-      <h1 className="workout-plan-title">{workoutPlan.name}</h1>
-      <img
-        src={workoutPlan.imageUrl}
-        alt={workoutPlan.name}
-        className="workout-image"
-      />
-      <p>{workoutPlan.description}</p>
+      <h1 className="workout-plan-title">Workout Plan</h1>
 
       <div className="workout-list">
-        {workoutPlan.workouts &&
-          workoutPlan.workouts.map((workout) => (
-            <div
-              key={workout.name}
-              className={`workout-item ${
-                selectedWorkouts[workout.name] ? "selected" : ""
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={selectedWorkouts[workout.name]}
-                onChange={() => handleCheckboxChange(workout.name)}
-              />
-              <label>{workout.name}</label>
+        {exercises.map((ex) => (
+          <div
+            key={ex.id}
+            className={`workout-item ${
+              selectedWorkouts[ex.name] ? "selected" : ""
+            }`}
+          >
+            <input
+              type="checkbox"
+              checked={selectedWorkouts[ex.name] || false}
+              onChange={() => handleCheckboxChange(ex.name)}
+            />
+            <label>{ex.name}</label>
+            {ex.gifUrl && (
+              <img src={ex.gifUrl} alt={ex.name} className="workout-image" />
+            )}
 
-              {/* Count increment/decrement controls */}
-              <div className="counter-controls">
-                <button onClick={() => decrementCount(workout.name)}>-</button>
-                <span>{counts[workout.name]}</span>
-                <button onClick={() => incrementCount(workout.name)}>+</button>
-              </div>
+            <div className="counter-controls">
+              <button onClick={() => decrementCount(ex.name)}>-</button>
+              <span>{counts[ex.name]}</span>
+              <button onClick={() => incrementCount(ex.name)}>+</button>
             </div>
-          ))}
+          </div>
+        ))}
       </div>
 
-      {/* Pass workouts and selectedWorkouts as props */}
-      <TrackProgress
-        workouts={workoutPlan.workouts}
-        selectedWorkouts={selectedWorkouts}
-      />
+      <TrackProgress workouts={exercises} selectedWorkouts={selectedWorkouts} />
     </div>
   );
 }
