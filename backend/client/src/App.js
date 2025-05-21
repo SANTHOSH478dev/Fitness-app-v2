@@ -1,8 +1,9 @@
 // App.js
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
 
+// Components
+import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import Plans from "./components/Plans";
 import TrackProgress from "./components/TrackProgress";
@@ -11,7 +12,7 @@ import Profile from "./components/Profile";
 import WorkoutPage from "./components/WorkoutPage";
 import CreateAccount from "./components/CreateAccount";
 import Login from "./components/Login";
-import WorkoutList from "./components/WorkoutList"; // ✅ Import WorkoutList
+import WorkoutList from "./components/WorkoutList";
 
 const App = () => {
   return (
@@ -28,7 +29,7 @@ const App = () => {
         <Route path="/create-account" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />
         <Route path="/workout/:id" element={<WorkoutPage />} />
-        <Route path="/workout-list" element={<WorkoutList />} /> {/* ✅ Added Route */}
+        <Route path="/workout-list" element={<WorkoutList />} />
       </Routes>
     </Router>
   );
