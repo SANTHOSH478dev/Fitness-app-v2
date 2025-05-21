@@ -10,7 +10,7 @@ const Plans = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/workout-plans")
+      .get("http://localhost:5001/api/workout-plans")
       .then((res) => {
         setPlans(res.data);
       })
